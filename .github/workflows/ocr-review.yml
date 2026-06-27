@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   review:
@@ -31,4 +32,14 @@ jobs:
           ocr review \
             --from "origin/${{ github.event.pull_request.base.ref }}" \
             --to "${{ github.event.pull_request.head.sha }}" \
-            --rule ./ocr-rules.json
+            --rule ./ocr-rules.json \
+            | tee /tmp/ocr-output.txt || true
+
+      - name: Post to PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -s /tmp/ocr-output.txt ]; then
+            gh pr comment ${{ github.event.pull_request.number }} \
+              --body "$(printf '## Code Review\n\n```\n%s\n```' "$(cat /tmp/ocr-output.txt)")"
+          fi
