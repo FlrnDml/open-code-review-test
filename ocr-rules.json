@@ -1,0 +1,24 @@
+{
+  "rules": [
+    {
+      "path": "**/*.{ts,tsx,js,jsx,mjs,cjs}",
+      "rule": "ONLY report issues if they are clearly bugs, security vulnerabilities, or serious defects that will cause runtime errors or data loss. Do NOT comment on style, naming, formatting, SEO, comments, hardcoding, duplicate code, best practices, or suggestions. Do NOT comment if the code is correct — no 'looks good' or 'no issues found' comments. If there is nothing critically wrong, produce ZERO comments. Silence means approval.\n\nReport ONLY:\n- Bugs: null/undefined crashes, off-by-one, infinite loops, race conditions, wrong logic\n- Security: XSS, code injection, exposed secrets, SQL injection, prototype pollution\n- Serious defects: memory leaks, data loss, broken API contracts\n\nDo NOT report: style, naming, SEO metadata, config suggestions, minor improvements, 'consider doing X', trailing newlines, POSIX compliance.",
+      "merge_system_rule": true
+    },
+    {
+      "path": "**/*.{css,scss,less}",
+      "rule": "ONLY report if there is a syntax error that will break the build. Do NOT comment on style choices, non-standard directives from build tools (like @theme, @apply, @tailwind), or suggestions. If nothing is broken, produce ZERO comments.",
+      "merge_system_rule": true
+    },
+    {
+      "path": "**/*.{json,yaml,yml,toml}",
+      "rule": "ONLY report if there is a syntax error or a security issue (exposed secrets, credentials). Do NOT comment on dependency versions, formatting, structure choices, or 'looks good' observations. If nothing is broken, produce ZERO comments.",
+      "merge_system_rule": true
+    },
+    {
+      "path": "**/*",
+      "rule": "ONLY report critical bugs or security vulnerabilities. If nothing is critically wrong, produce ZERO comments. No style, no suggestions, no 'looks good' comments.",
+      "merge_system_rule": true
+    }
+  ]
+}
