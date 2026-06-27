@@ -33,6 +33,7 @@ jobs:
             --from "origin/${{ github.event.pull_request.base.ref }}" \
             --to "${{ github.event.pull_request.head.sha }}" \
             --rule ./ocr-rules.json \
+            --audience agent \
             | tee /tmp/ocr-output.txt || true
 
       - name: Post to PR
