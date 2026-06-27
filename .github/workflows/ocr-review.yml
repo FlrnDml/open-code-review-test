@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   review:
@@ -31,4 +32,19 @@ jobs:
           ocr review \
             --from "origin/${{ github.event.pull_request.base.ref }}" \
             --to "${{ github.event.pull_request.head.sha }}" \
-            --rule ./ocr-rules.json
+            --rule ./ocr-rules.json \
+            --audience agent \
+            | tee /tmp/ocr-output.txt || true
+
+      - name: Post to PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Strip ANSI color/escape codes from OCR output (terminal formatting breaks on GitHub)
+          sed -i 's/\x1b\[[0-9;]*[a-zA-Z]//g' /tmp/ocr-output.txt
+          # Only post if OCR produced output (-s = file exists and is not empty)
+          if [ -s /tmp/ocr-output.txt ]; then
+            # Post as PR comment using gh CLI (uses GITHUB_TOKEN via GH_TOKEN env var)
+            gh pr comment ${{ github.event.pull_request.number }} \
+              --body "$(printf '## Code Review\n\nCommit: `%s`\n\n```\n%s\n```' "${GITHUB_SHA::7}" "$(cat /tmp/ocr-output.txt)")"
+          fi
